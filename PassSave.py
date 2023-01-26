@@ -35,6 +35,13 @@ def create_new_email():
     connect.commit()
     connect.close()
 
+def create_password_database():
+    connect = sqlite3.connect('passwords.db')
+    cur = connect.cursor()
+    cur.execute(""" CREATE TABLE passwords (
+                passwords text
+    )""")
+
 def add_email(email):
     connect = sqlite3.connect('email.db')
     cur = connect.cursor()
@@ -45,10 +52,11 @@ def add_email(email):
 def add_login(password):
     connect = sqlite3.connect('login.db')
     cur = connect.cursor()
+    #newpassword = PassEnd.encryption(password)
+    #print(newpassword)
     cur.execute("INSERT INTO login VALUES (?)", (password,))
     connect.commit()
     connect.close()
-
 
 def login():
     global count
@@ -60,20 +68,23 @@ def login():
         login_email = input("Type in an email!")
         create_new_login()
         create_new_email()
+        PassEnd.create()
         add_login(login_pass)
         add_email(login_email)
         print("You made a new password!")
         count = '2'
 
     elif dec == 'Y':
-        maybe = input("Type in password")
+        #PassEnd.create()
+        newpassword = input("Type in password")
+        #encryptednewpassword = PassEnd.encryption(newpassword)
         connect = sqlite3.connect('login.db')
         cur = connect.cursor()
         check = cur.execute("SELECT rowid, * FROM login")
         for c in check:
-            if maybe == c[1]:
+            if newpassword == c[1]: #encrpytednewpassword instead
                 count = '2'
-            elif maybe != c[1]:
+            elif newpassword != c[1]:
                 count = '22'
 
         connect.commit()

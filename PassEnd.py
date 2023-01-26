@@ -1,6 +1,7 @@
 import sqlite3
 import sys
 import subprocess
+import argon2
 
 # Create new table if needed!
 def create():
@@ -165,3 +166,25 @@ def order():
     cur = connect.cursor()
     cur.execute("SELECT rowid, * FROM passwords ORDER BY rowid")
 
+def encryption(input): # returns the hash version of the password inputted
+    argon2Hasher = argon2.PasswordHasher(
+        time_cost = 3,
+        memory_cost = 64,
+        parallelism = 1,
+        hash_len = 32,
+        salt_len = 16
+    )
+    password = input
+    hash = argon2Hasher.hash(password) # hash + salt of password 
+    
+def verification(input): # returns true if the password is true to the hash and salt 
+    argon2Hasher = argon2.PasswordHasher(
+        time_cost = 3,
+        memory_cost = 64,
+        parallelism = 1,
+        hash_len = 32,
+        salt_len = 16
+    )
+    password = input
+
+    verifyValid = argon2Hasher.verify(hash, password) # verification: true if the same, false if not the same
